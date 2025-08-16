@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import {  useEffect, useRef, useState } from "react";
 import ProfileDropdown from "../components/index";
-import { DevBundlerService } from "next/dist/server/lib/dev-bundler-service";
+
 
 type Point = {
   x: number,
@@ -59,6 +59,7 @@ type Shape = Rectangle | Line | Path | Circle
 export default function Page() {
   const router = useRouter()
   const session = useSession()
+  const [socket, setSocket] = useState(null)
   const [roomId, setRoomId] = useState("")
   
   const ref = useRef<HTMLCanvasElement>(null)
@@ -307,6 +308,9 @@ export default function Page() {
     return (ans || (x >= x1 - 15 && x <= x2 + 15 && y >= y1 - 15 && y <= y2 + 15))
   }
 
+
+
+  
   useEffect(() => {
     const canvas = ref.current
     const ctx = canvas?.getContext("2d")
@@ -776,6 +780,16 @@ export default function Page() {
         );
     }
   else {
+    // console.log(session)
+    //@ts-ignore
+    const url = `ws://localhost:4000?token=${session.data.user.idToken}`
+    const ws = new WebSocket(url)
+    ws.onopen = (msg) => {
+      console.log('connection success from client side')
+    }
+    ws.onmessage = (msg) => {
+      console.log(msg)
+    }
     return (
       <div className="w-full">
         <ProfileDropdown session={session.data} room={true} roomID={roomId ?? ''}/>

@@ -12,9 +12,16 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@types/express": "^5.0.3",
-    "express": "^5.1.0",
     "@repo/db": "*",
-    "@repo/ui": "*"
+    "@repo/ui": "*",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/ws": "^8.18.1",
+    "dotenv": "^16.0.3",
+    "express": "^5.1.0",
+    "google-auth-library": "^10.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "next-auth": "^4.24.11",
+    "ws": "^8.18.3"
   }
 }
