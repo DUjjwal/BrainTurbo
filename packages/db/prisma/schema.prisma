@@ -18,3 +18,56 @@ model Room {
   id         Int         @unique @default(autoincrement())
   name       String      @unique
 }
+
+model Rectangle {
+  id           Int              @unique @default(autoincrement())
+  type         String           @default("rect")
+  x            Int           
+  y            Int
+  width        Int
+  height       Int
+  lineWidth    Int
+  lineDash     Int[]
+  color        String
+  roomId       Int
+  @@index(fields: [roomId])
+}
+
+
+model Line {
+  id           Int              @unique @default(autoincrement())
+  type         String           @default("line")
+  startX       Int           
+  startY       Int
+  endX         Int
+  endY         Int
+  lineWidth    Int
+  lineDash     Int[]
+  color        String
+  roomId       Int
+  @@index(fields: [roomId])
+}
+
+model Circle {
+  id           Int              @unique @default(autoincrement())
+  type         String           @default("circle")
+  x            Int           
+  y            Int
+  r            Int
+  lineWidth    Int
+  lineDash     Int[]
+  color        String
+  roomId       Int
+  @@index(fields: [roomId])
+}
+
+model Path {
+  id           Int              @unique @default(autoincrement())
+  type         String           @default("path")
+  points       Int[]
+  lineWidth    Int
+  lineDash     Int[]
+  color        String
+  roomId       Int
+  @@index(fields: [roomId])
+}
