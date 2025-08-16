@@ -11,10 +11,14 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.7",
+    "@repo/db": "*",
     "@repo/ui": "*",
     "next": "^15.4.2",
+    "next-auth": "^4.24.11",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "uuid-random": "^1.3.2"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^15.4.2",

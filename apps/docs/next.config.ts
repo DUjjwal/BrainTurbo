@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  images: {
+    domains: ["lh3.googleusercontent.com"], // add Google image domain here
+  }
 };
 
 export default nextConfig;
