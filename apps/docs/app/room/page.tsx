@@ -4,11 +4,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import uuid from 'uuid-random';
 import ProfileDropdown from "../components";
-import {PrismaClient} from "@repo/db/client"
-const client = new PrismaClient()
+import { roomExist, getDBID, createRoom } from "../actions/user";
+  import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 export default function Home() {
-    console.log(client)
     const session = useSession()
     const [ roomId, setRoomId ] = useState("")
     
@@ -59,23 +58,66 @@ export default function Home() {
                         //check if its a valid roomName present in DB also
                         //if yes set the roomId in localstorage
                         if(roomId === '')return;
-                        localStorage.setItem('roomid', roomId)
-                        router.push("/canvas")
-                        
-
-
-                        
+                        if(await roomExist(roomId)) {
+                            const id = await getDBID(roomId)
+                            localStorage.setItem('roomid', String(id))
+                            router.push("/canvas")
+                        }
+                        else {
+                            toast.error('Room ID Invalid!', {
+                            position: "top-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "light",
+                            transition: Bounce,
+                            });
+                            setRoomId("")
+                        }                     
                     }}>Join Room</button>
                     <div className = "inline-flex items-center justify-center w-full">
                         <hr className = "w-64 h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"/>
                         <span className = "absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-gray-900">or</span>
                     </div>
-                    <button type="submit" className = "w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-fullpx-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={() => {
+                    <button type="submit" className = "w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-fullpx-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={async () => {
                         const id = uuid()
-                        localStorage.setItem('roomid', id)
-                        router.push("/canvas")
+                        const res = await createRoom(id)
+                        if(res) {
+                            const dbid = await getDBID(id)
+                            localStorage.setItem('roomid', String(dbid))
+                            router.push("/canvas")
+                        }
+                        else {
+                            toast.error('Room Creation Failed Try Again', {
+                            position: "top-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: false,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "light",
+                            transition: Bounce,
+                            });
+                        }
                     }}>Create Room</button>
                 </div>
+                <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Bounce}
+                />
             </div>
         )
     }
