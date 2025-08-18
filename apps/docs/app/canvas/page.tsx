@@ -171,8 +171,6 @@ export default function Page() {
     return idx
   }
 
-
-
   function isPointNearLine(x1: number, y1: number, x2: number, y2: number, px: number, py: number): boolean {
     const A = px - x1;
     const B = py - y1;
@@ -213,7 +211,6 @@ export default function Page() {
     return distance <= tolerance;
   }
 
-
   function onLine(e: globalThis.MouseEvent): number {
     const x = e.clientX, y = e.clientY
     let idx = -1
@@ -250,8 +247,6 @@ export default function Page() {
     })
     return idx
   }
-
-
 
   function onRectangle(e: globalThis.MouseEvent): number {
     const tolerance = 3;
@@ -317,9 +312,6 @@ export default function Page() {
     y = e.clientY;
     return (ans || (x >= x1 - 15 && x <= x2 + 15 && y >= y1 - 15 && y <= y2 + 15))
   }
-
-
-
   
   useEffect(() => {
     const canvas = ref.current
@@ -755,7 +747,7 @@ export default function Page() {
       cancelAnimationFrame(animationFrameId); 
     }
 
-  }, [])
+  }, [session.status])
   if(!session) {
         setTimeout(() => {
             router.push("/")
