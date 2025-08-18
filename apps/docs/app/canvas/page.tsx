@@ -70,6 +70,7 @@ type Shape = Rectangle | Line | Path | Circle
 export default function Page() {
   const router = useRouter()
   const session = useSession()
+  const socket = useRef<WebSocket | null>(null)
   const [roomId, setRoomId] = useState("")
   
   const ref = useRef<HTMLCanvasElement>(null)
@@ -313,6 +314,34 @@ export default function Page() {
     return (ans || (x >= x1 - 15 && x <= x2 + 15 && y >= y1 - 15 && y <= y2 + 15))
   }
   
+  //for reload working fine
+  useEffect(() => {
+    if(session && session.status === 'authenticated') {
+      //@ts-ignore
+      const ws = new WebSocket(`ws://localhost:4000?token=${session.data.user.idToken}`)
+      ws.onopen = () => {
+        console.log('connection from client ok sending connect')
+        if(ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({
+            type: 'connect'
+          }))
+          socket.current = ws
+        }
+      }
+      ws.onclose = () => {
+        router.push("/")
+      }
+      
+      
+    }
+
+  }, [session, session.status])
+
+  
+
+  
+
+
   useEffect(() => {
     const canvas = ref.current
     const ctx = canvas?.getContext("2d")
@@ -639,16 +668,22 @@ export default function Page() {
 
         if(cursor.current === 'R') {
             shapes.current.push({
-            type: "rect",
-            x: rectX,
-            y: rectY,
-            width: e.clientX - rectX,
-            height: e.clientY - rectY,
-            color: color.current,
-            lineWidth: lineWidth.current,
-            lineDash: lineDash.current
-          })
-          DrawRect()
+              type: "rect",
+              x: rectX,
+              y: rectY,
+              width: e.clientX - rectX,
+              height: e.clientY - rectY,
+              color: color.current,
+              lineWidth: lineWidth.current,
+              lineDash: lineDash.current
+            })
+            if(socket.current) {
+              console.log('sending strokes')
+              socket.current.send(JSON.stringify({
+                type: 'rect drawn'
+              }))
+            }
+            DrawRect()
         }
         else if(cursor.current === 'A') {
           if(rectIdx !== -1)
@@ -748,6 +783,7 @@ export default function Page() {
     }
 
   }, [session.status])
+
   if(!session) {
         setTimeout(() => {
             router.push("/")
@@ -782,6 +818,7 @@ export default function Page() {
         );
     }
   else {
+    
     return (
       <div className="w-full">
         <ProfileDropdown session={session.data} room={true} roomID={roomId ?? ''}/>
