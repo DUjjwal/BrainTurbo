@@ -719,7 +719,7 @@ export default function Page() {
           if(socket.current) {
             console.log('sending strokes')
             socket.current.send(JSON.stringify({
-              type: 'rect',
+              type: 'line',
               roomid: Number(localStorage.getItem('roomid')),
               data: obj
             }))
@@ -746,7 +746,7 @@ export default function Page() {
           if(socket.current) {
             console.log('sending strokes')
             socket.current.send(JSON.stringify({
-              type: 'rect',
+              type: 'circle',
               roomid: Number(localStorage.getItem('roomid')),
               data: obj
             }))
@@ -755,13 +755,23 @@ export default function Page() {
         }
         else if(cursor.current === 'P') {
           if(points.length > 0) {
-            shapes.current.push({
+            const obj: Path = {
               type: "path",
               points: points,
               color: color.current,
               lineWidth: lineWidth.current,
-            lineDash: lineDash.current
-            })
+              lineDash: lineDash.current
+            }
+            shapes.current.push(obj)
+            if(socket.current) {
+              console.log('sending strokes')
+              socket.current.send(JSON.stringify({
+                type: 'path',
+                roomid: Number(localStorage.getItem('roomid')),
+                data: obj
+              }))
+            }
+            console.log(JSON.parse(JSON.stringify(obj)))
             points = []
             dp = []
             DrawRect()

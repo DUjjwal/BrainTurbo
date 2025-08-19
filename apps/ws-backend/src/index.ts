@@ -88,7 +88,7 @@ wss.on("connection", async function (socket, req) {
                     roomid: parsedData.roomid
                 })
             }
-            else if(parsedData.type !== 'path' && parsedData.type !== 'text') {
+            else if(parsedData.type !== 'text') {
                 console.log('traversing shape')
                 console.log(Users.length)
                 Users.forEach((obj) => {
