@@ -59,11 +59,23 @@ wss.on("connection", async function (socket, req) {
                     roomid: parsedData.roomid
                 })
             }
-            else if(parsedData.type !== 'path' && parsedData.type !== 'text') {
+            else if(parsedData.type === 'delete') {
+                let sendObj = {
+                    type: 'delete',
+                    data: parsedData.data
+                }
+                console.log(sendObj)
+                Users.forEach((obj) => {
+                    if(obj.roomid === parsedData.roomid && obj.socket !== socket) {
+                        obj.socket.send(JSON.stringify(sendObj))
+                    }
+                })
+            }
+            else if(parsedData.type !== 'text') {
                 console.log('traversing shape')
                 console.log(Users.length)
                 Users.forEach((obj) => {
-                    if(obj.roomid === parsedData.roomid) {
+                    if(obj.roomid === parsedData.roomid && obj.socket !== socket) {
                         obj.socket.send(JSON.stringify(parsedData.data))
                     }
                 })
@@ -86,6 +98,18 @@ wss.on("connection", async function (socket, req) {
                 Users.push({
                     socket,
                     roomid: parsedData.roomid
+                })
+            }
+            else if(parsedData.type === 'delete') {
+                let sendObj = {
+                    type: 'delete',
+                    data: parsedData.data
+                }
+                console.log(sendObj)
+                Users.forEach((obj) => {
+                    if(obj.roomid === parsedData.roomid && obj.socket !== socket) {
+                        obj.socket.send(JSON.stringify(sendObj))
+                    }
                 })
             }
             else if(parsedData.type !== 'text') {

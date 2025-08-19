@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import {  useEffect, useRef, useState } from "react";
 import ProfileDropdown from "../components/index";
+import { Crimson_Text } from "next/font/google";
 
 
 
@@ -326,9 +327,25 @@ export default function Page() {
         }
       }
       ws.onmessage = (msg) => {
-        console.log(JSON.parse(msg.data))
-        shapes.current.push(JSON.parse(msg.data))
-        DrawRect()
+        const store = JSON.parse(JSON.stringify(shapes.current))
+        const parsed = JSON.parse(msg.data)
+        console.log("message received - ", parsed)
+        console.log('old shape', store)
+        if(parsed.type === 'delete') {
+          const shapesUpdates = shapes.current.filter((obj) => JSON.stringify(obj) !== JSON.stringify(parsed.data))
+          shapes.current = shapesUpdates
+          const canvas = ref.current
+          const ctx = canvas?.getContext("2d")
+          if(!ctx || !canvas)return;
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          DrawRect()
+        }
+        else {
+          shapes.current.push(JSON.parse(msg.data))
+          DrawRect()
+
+        }
+        console.log("new shapes - ", shapes.current)
       }
       ws.onclose = () => {
         router.push("/")
@@ -680,7 +697,7 @@ export default function Page() {
               lineDash: lineDash.current
             }
             shapes.current.push(obj)
-            if(socket.current) {
+            if(socket.current && obj.width !== 0 && obj.height !== 0) {
               console.log('sending strokes')
               socket.current.send(JSON.stringify({
                 type: 'rect',
@@ -791,6 +808,20 @@ export default function Page() {
     document.addEventListener("keydown", (e) => {
       if(e.key === 'Delete' && cursor.current === 'A') {
         if(selectedIdx !== -1) {
+          let delObj;
+          shapes.current.forEach((obj, index) => {
+            if(index === selectedIdx)
+              delObj = obj
+          })
+          console.log("delete objext", delObj)
+          if(socket.current) {
+            console.log('sending command to delete from client')
+            socket.current.send(JSON.stringify({
+              type: 'delete',
+              roomid: Number(localStorage.getItem('roomid')),
+              data: delObj
+            }))
+          }
           const updated = shapes.current.filter((obj, index) => index !== selectedIdx)
           shapes.current = updated
           ctx.clearRect(0, 0, canvas.width, canvas.height)
