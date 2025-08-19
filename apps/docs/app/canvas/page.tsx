@@ -63,10 +63,6 @@ type Path = {
 
 type Shape = Rectangle | Line | Path | Circle
 
-
-
-
-
 export default function Page() {
   const router = useRouter()
   const session = useSession()
@@ -323,10 +319,16 @@ export default function Page() {
         console.log('connection from client ok sending connect')
         if(ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify({
-            type: 'connect'
+            type: 'connect',
+            roomid: Number(localStorage.getItem('roomid'))
           }))
           socket.current = ws
         }
+      }
+      ws.onmessage = (msg) => {
+        console.log(JSON.parse(msg.data))
+        shapes.current.push(JSON.parse(msg.data))
+        DrawRect()
       }
       ws.onclose = () => {
         router.push("/")
@@ -667,7 +669,7 @@ export default function Page() {
       if(isDragging) {
 
         if(cursor.current === 'R') {
-            shapes.current.push({
+            const obj: Rectangle = {
               type: "rect",
               x: rectX,
               y: rectY,
@@ -676,11 +678,14 @@ export default function Page() {
               color: color.current,
               lineWidth: lineWidth.current,
               lineDash: lineDash.current
-            })
+            }
+            shapes.current.push(obj)
             if(socket.current) {
               console.log('sending strokes')
               socket.current.send(JSON.stringify({
-                type: 'rect drawn'
+                type: 'rect',
+                roomid: Number(localStorage.getItem('roomid')),
+                data: obj
               }))
             }
             DrawRect()

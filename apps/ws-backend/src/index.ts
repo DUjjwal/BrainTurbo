@@ -1,5 +1,5 @@
 import express from "express"
-import {WebSocketServer} from "ws"
+import {WebSocketServer, WebSocket} from "ws"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv";
 dotenv.config();
@@ -22,6 +22,13 @@ const httpServer = app.listen(4000, async () => {
     console.log('server is listening at port 4000')
 })
 
+type User = {
+    socket: WebSocket,
+    roomid: number
+}
+
+const Users: User[] = []
+
 const wss = new WebSocketServer({server: httpServer})
 
 wss.on("connection", async function (socket, req) {
@@ -43,11 +50,27 @@ wss.on("connection", async function (socket, req) {
                 parsedData = JSON.parse(data)
             else
                 parsedData = JSON.parse(data.toString("utf-8"))
+            
             console.log(parsedData)
+            if(parsedData.type === 'connect') {
+                console.log('connect happen')
+                Users.push({
+                    socket,
+                    roomid: parsedData.roomid
+                })
+            }
+            else if(parsedData.type !== 'path' && parsedData.type !== 'text') {
+                console.log('traversing shape')
+                console.log(Users.length)
+                Users.forEach((obj) => {
+                    if(obj.roomid === parsedData.roomid) {
+                        obj.socket.send(JSON.stringify(parsedData.data))
+                    }
+                })
+            }
         })
 
         buffer.length = 0
-
 
         socket.on("message", function (data) {
             console.log('message received on server')
@@ -56,7 +79,25 @@ wss.on("connection", async function (socket, req) {
                 parsedData = JSON.parse(data)
             else
                 parsedData = JSON.parse(data.toString("utf-8"))
+            
             console.log(parsedData)
+            if(parsedData.type === 'connect') {
+                console.log('connect happen')
+                Users.push({
+                    socket,
+                    roomid: parsedData.roomid
+                })
+            }
+            else if(parsedData.type !== 'path' && parsedData.type !== 'text') {
+                console.log('traversing shape')
+                console.log(Users.length)
+                Users.forEach((obj) => {
+                    if(obj.roomid === parsedData.roomid && obj.socket !== socket) {
+                        obj.socket.send(JSON.stringify(parsedData.data))
+                    }
+                })
+            }
+
         }) 
         
     }catch(err) {
