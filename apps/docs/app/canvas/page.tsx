@@ -705,8 +705,7 @@ export default function Page() {
           pointIdx = -1
         }
         else if(cursor.current === 'L') {
-          console.log("hua")
-          shapes.current.push({
+          const obj: Line = {
             type: "line",
             startX: lineX,
             startY: lineY,
@@ -715,7 +714,16 @@ export default function Page() {
             color: color.current,
             lineWidth: lineWidth.current,
             lineDash: lineDash.current
-          })
+          }
+          shapes.current.push(obj)
+          if(socket.current) {
+            console.log('sending strokes')
+            socket.current.send(JSON.stringify({
+              type: 'rect',
+              roomid: Number(localStorage.getItem('roomid')),
+              data: obj
+            }))
+          }
           DrawRect()
         }
         else if(cursor.current === 'C') {
@@ -725,7 +733,7 @@ export default function Page() {
 
           const dist = (mx-circleX)*(mx-circleX) + (my-circleY)*(my-circleY)
           const r = Math.sqrt(dist)
-          shapes.current.push({
+          const obj: Circle = {
             type: "circle",
             x: mx,
             y: my,
@@ -733,7 +741,16 @@ export default function Page() {
             color: color.current,
             lineWidth: lineWidth.current,
             lineDash: lineDash.current
-          })
+          }
+          shapes.current.push(obj)
+          if(socket.current) {
+            console.log('sending strokes')
+            socket.current.send(JSON.stringify({
+              type: 'rect',
+              roomid: Number(localStorage.getItem('roomid')),
+              data: obj
+            }))
+          }
           DrawRect()
         }
         else if(cursor.current === 'P') {
