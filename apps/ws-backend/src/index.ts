@@ -24,7 +24,9 @@ const httpServer = app.listen(4000, async () => {
 
 type User = {
     socket: WebSocket,
-    roomid: number
+    roomid: number,
+    userid: String,
+    username: String
 }
 
 const Users: User[] = []
@@ -56,7 +58,9 @@ wss.on("connection", async function (socket, req) {
                 console.log('connect happen')
                 Users.push({
                     socket,
-                    roomid: parsedData.roomid
+                    roomid: parsedData.roomid,
+                    userid: parsedData.userid,
+                    username: parsedData.username
                 })
             }
             else if(parsedData.type === 'delete') {
@@ -66,8 +70,16 @@ wss.on("connection", async function (socket, req) {
                 }
                 console.log(sendObj)
                 Users.forEach((obj) => {
-                    if(obj.roomid === parsedData.roomid && obj.socket !== socket) {
+                    if(obj.roomid === parsedData.roomid && obj.userid !== parsedData.userid) {
                         obj.socket.send(JSON.stringify(sendObj))
+                    }
+                })
+            }
+            else if(parsedData.type === 'mousemove') {
+            
+                Users.forEach((obj) => {
+                    if(obj.roomid === parsedData.roomid && obj.userid !== parsedData.userid) {
+                        obj.socket.send(JSON.stringify(parsedData))
                     }
                 })
             }
@@ -75,7 +87,7 @@ wss.on("connection", async function (socket, req) {
                 console.log('traversing shape')
                 console.log(Users.length)
                 Users.forEach((obj) => {
-                    if(obj.roomid === parsedData.roomid && obj.socket !== socket) {
+                    if(obj.roomid === parsedData.roomid && obj.userid !== parsedData.userid) {
                         obj.socket.send(JSON.stringify(parsedData.data))
                     }
                 })
@@ -97,7 +109,9 @@ wss.on("connection", async function (socket, req) {
                 console.log('connect happen')
                 Users.push({
                     socket,
-                    roomid: parsedData.roomid
+                    roomid: parsedData.roomid,
+                    userid: parsedData.userid,
+                    username: parsedData.username
                 })
             }
             else if(parsedData.type === 'delete') {
@@ -107,8 +121,16 @@ wss.on("connection", async function (socket, req) {
                 }
                 console.log(sendObj)
                 Users.forEach((obj) => {
-                    if(obj.roomid === parsedData.roomid && obj.socket !== socket) {
+                    if(obj.roomid === parsedData.roomid && obj.userid !== parsedData.userid) {
                         obj.socket.send(JSON.stringify(sendObj))
+                    }
+                })
+            }
+            else if(parsedData.type === 'mousemove') {
+            
+                Users.forEach((obj) => {
+                    if(obj.roomid === parsedData.roomid && obj.userid !== parsedData.userid) {
+                        obj.socket.send(JSON.stringify(parsedData))
                     }
                 })
             }
@@ -116,7 +138,7 @@ wss.on("connection", async function (socket, req) {
                 console.log('traversing shape')
                 console.log(Users.length)
                 Users.forEach((obj) => {
-                    if(obj.roomid === parsedData.roomid && obj.socket !== socket) {
+                    if(obj.roomid === parsedData.roomid && obj.userid !== parsedData.userid) {
                         obj.socket.send(JSON.stringify(parsedData.data))
                     }
                 })

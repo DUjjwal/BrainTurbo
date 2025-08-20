@@ -46,6 +46,7 @@ export default function Home() {
         );
     }
     else {
+        const userid = uuid()
         return (
             <div className="w-full h-screen flex justify-center items-center">
                 <ProfileDropdown session={session.data} room={false} roomID=""/>
@@ -61,6 +62,8 @@ export default function Home() {
                         if(await roomExist(roomId)) {
                             const id = await getDBID(roomId)
                             localStorage.setItem('roomid', String(id))
+                            localStorage.setItem('userid', String(userid))
+                            localStorage.setItem('username', String(session.data?.user?.name))
                             router.push("/canvas")
                         }
                         else {
@@ -88,6 +91,8 @@ export default function Home() {
                         if(res) {
                             const dbid = await getDBID(id)
                             localStorage.setItem('roomid', String(dbid))
+                            localStorage.setItem('userid', String(userid))
+                            localStorage.setItem('username', String(session.data?.user?.name))
                             router.push("/canvas")
                         }
                         else {

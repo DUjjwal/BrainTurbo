@@ -17,6 +17,7 @@ export default function Page() {
         />
         <span className="text-gray-700 font-medium">Get Started with Google</span>
       </button>
+      
     </div>
   )  
 }
