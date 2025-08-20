@@ -339,6 +339,7 @@ export default function Page() {
       ws.onmessage = (msg) => {
         const store = JSON.parse(JSON.stringify(shapes.current))
         const parsed = JSON.parse(msg.data)
+        console.log(parsed)
         if(parsed.type === 'delete') {
           const shapesUpdates = shapes.current.filter((obj) => JSON.stringify(obj) !== JSON.stringify(parsed.data))
           shapes.current = shapesUpdates
@@ -369,8 +370,14 @@ export default function Page() {
           }
           div.style.left = `${parsed.x}px`
           div.style.top = `${parsed.y}px`
-        
-          
+        }
+        else if(parsed.type === 'disconnect') {
+          const div = document.getElementById(`${parsed.userid}`)
+          console.log('disconncet req', div)
+          if(div) {
+            console.log('hua')
+            div.remove();
+          }
         }
         else {
           shapes.current.push(JSON.parse(msg.data))
@@ -407,6 +414,16 @@ export default function Page() {
       } 
       
     }, 1000)  
+    const handleUnload = () => {
+      if(socket.current) {
+        socket.current.send(JSON.stringify({
+          type: 'disconnect',
+          userid: localStorage.getItem('userid'),
+          roomid: Number(localStorage.getItem('roomid'))
+        }))
+      }  
+    }
+    window.addEventListener('beforeunload', handleUnload);
     return () => {
       if(mouseSendEvent.current)
       clearInterval(mouseSendEvent.current)

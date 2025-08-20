@@ -75,10 +75,11 @@ wss.on("connection", async function (socket, req) {
                     }
                 })
             }
-            else if(parsedData.type === 'mousemove') {
-            
+            else if(parsedData.type === 'mousemove' || parsedData.type === 'disconnect') {
+                console.log('disconnect trigger')
                 Users.forEach((obj) => {
                     if(obj.roomid === parsedData.roomid && obj.userid !== parsedData.userid) {
+                        console.log('sent from here')
                         obj.socket.send(JSON.stringify(parsedData))
                     }
                 })
@@ -126,11 +127,13 @@ wss.on("connection", async function (socket, req) {
                     }
                 })
             }
-            else if(parsedData.type === 'mousemove') {
-            
+            else if(parsedData.type === 'mousemove' || parsedData.type === 'disconnect') {
+                console.log('disconnect trigger')
                 Users.forEach((obj) => {
                     if(obj.roomid === parsedData.roomid && obj.userid !== parsedData.userid) {
+                        console.log('sent from here')
                         obj.socket.send(JSON.stringify(parsedData))
+
                     }
                 })
             }
