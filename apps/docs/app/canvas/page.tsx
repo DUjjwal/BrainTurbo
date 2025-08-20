@@ -413,7 +413,7 @@ export default function Page() {
         prevMouseY.current = mouseY.current
       } 
       
-    }, 1000)  
+    }, 200)  
     const handleUnload = () => {
       if(socket.current) {
         socket.current.send(JSON.stringify({
