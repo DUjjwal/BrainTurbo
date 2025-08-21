@@ -181,6 +181,59 @@ export default function Page() {
     return idx
   }
 
+  function createTextBox(left: number, right: number, val: string): void {
+    const text = document.createElement('textarea')
+    text.style.position = 'fixed'
+    text.style.left = `${left}px`
+    text.style.top = `${right}px`
+    text.style.border = 'none'
+    text.style.outline = 'none'
+    text.style.resize = 'both'
+    text.style.background = 'transparent'
+    text.style.fontSize = `${fontSize.current}px`
+    text.style.color = color.current
+    text.id = 'text-box'
+    text.style.textAlign = textAlign.current
+    text.value = `${val}`
+    document.body.append(text)
+    setTimeout(() => {
+      text.focus()
+      text.addEventListener('focus', () => {
+        text.style.outline = `1px solid #d2d4d6`
+      })
+      text.addEventListener('blur', () => {
+        const txt = text.value.trim()
+        if(!txt) {
+          document.body.removeChild(text)
+        }
+        else {
+          const left = Number(text.style.left.slice(0,text.style.left.length-2))
+          const top = Number(text.style.top.slice(0,text.style.top.length-2))
+          if(socket.current) {
+            socket.current.send(JSON.stringify({
+              type: 'text',
+              roomid: Number(localStorage.getItem('roomid')),
+              userid: localStorage.getItem('userid'),
+              left,
+              top,
+              text: txt
+            }))
+          }
+          text.style.outline = 'none'
+          text.readOnly = true
+        }
+      })
+      text.addEventListener('dblclick', () => {
+        text.readOnly = false
+        text.focus()
+        setCursorState('A')
+        cursor.current = 'A'
+      })
+      setCursorState('A')
+      cursor.current = 'A'
+    }, 5)
+  }
+
   function isPointNearLine(x1: number, y1: number, x2: number, y2: number, px: number, py: number): boolean {
     const A = px - x1;
     const B = py - y1;
@@ -329,7 +382,6 @@ export default function Page() {
       //@ts-ignore
       const ws = new WebSocket(`ws://localhost:4000?token=${session.data.user.idToken}`)
       ws.onopen = () => {
-        // console.log('connection from client ok sending connect')
         if(ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify({
             type: 'connect',
@@ -343,7 +395,6 @@ export default function Page() {
       ws.onmessage = (msg) => {
         const store = JSON.parse(JSON.stringify(shapes.current))
         const parsed = JSON.parse(msg.data)
-        console.log(parsed)
         if(parsed.type === 'delete') {
           const shapesUpdates = shapes.current.filter((obj) => JSON.stringify(obj) !== JSON.stringify(parsed.data))
           shapes.current = shapesUpdates
@@ -354,7 +405,6 @@ export default function Page() {
           DrawRect()
         }
         else if(parsed.type === 'mousemove') {
-          console.log('mousemove received', parsed.x, parsed.y);
           let div = document.getElementById(`${parsed.userid}`)
           let name = parsed.username.split(" ")[0].trim()
           if(name.length > 8) {
@@ -377,14 +427,11 @@ export default function Page() {
         }
         else if(parsed.type === 'disconnect') {
           const div = document.getElementById(`${parsed.userid}`)
-          console.log('disconncet req', div)
           if(div) {
-            console.log('hua')
             div.remove();
           }
         }
         else if(parsed.type === 'move') {
-          console.log('received')
           const updateShape: Shape[] = []
           shapes.current.forEach((obj) => {
             if(JSON.stringify(obj) === JSON.stringify(parsed.oldshape))
@@ -395,12 +442,26 @@ export default function Page() {
           shapes.current = updateShape
           DrawRect()
         }
+        else if(parsed.type === 'text') {
+          console.log('received text')
+          let flag: boolean = false
+          const arr: HTMLTextAreaElement[] = Array.from(document.querySelectorAll('#text-box'))
+          arr.forEach((obj) => {
+            if(obj.style.left === `${parsed.left}px` && obj.style.top === `${parsed.top}px`) {
+              flag = true
+              obj.value = parsed.text
+            }
+          })
+          if(flag === false) {
+            createTextBox(parsed.left, parsed.top, parsed.text)
+            
+          }
+        }
         else {
           shapes.current.push(JSON.parse(msg.data))
           DrawRect()
 
         }
-        // console.log("new shapes - ", shapes.current)
       }
       ws.onclose = () => {
         router.push("/")
@@ -414,7 +475,6 @@ export default function Page() {
   useEffect(() => {
     mouseSendEvent.current = setInterval(() => {
       if(socket.current && mouseX.current !== prevMouseX.current && mouseY.current !== prevMouseY.current)  {
-        console.log('sending mouse event', mouseX.current, mouseY.current)
         socket.current.send(JSON.stringify({
           type: 'mousemove',
           email: session.data?.user?.email,
@@ -590,6 +650,18 @@ export default function Page() {
               document.body.removeChild(text)
             }
             else {
+              const left = Number(text.style.left.slice(0,text.style.left.length-2))
+              const top = Number(text.style.top.slice(0,text.style.top.length-2))
+              if(socket.current) {
+                socket.current.send(JSON.stringify({
+                  type: 'text',
+                  roomid: Number(localStorage.getItem('roomid')),
+                  userid: localStorage.getItem('userid'),
+                  left,
+                  top,
+                  text: txt
+                }))
+              }
               text.style.outline = 'none'
               text.readOnly = true
             }
@@ -651,9 +723,6 @@ export default function Page() {
       if(isDragging && cursor.current === 'C') {
         const mx = ( e.clientX + circleX ) / 2
         const my = ( e.clientY + circleY ) / 2
-
-        // console.log(circleX+" "+circleY)
-        // console.log(mx+" "+my)
 
         const dist = (mx-circleX)*(mx-circleX) + (my-circleY)*(my-circleY)
         const r = Math.sqrt(dist)
@@ -758,7 +827,6 @@ export default function Page() {
           }
           
 
-          // console.log(lineIdx, rectIdx)
         }
         
       }
@@ -792,7 +860,6 @@ export default function Page() {
             }
             shapes.current.push(obj)
             if(socket.current && obj.width !== 0 && obj.height !== 0) {
-              // console.log('sending strokes')
               socket.current.send(JSON.stringify({
                 type: 'rect',
                 roomid: Number(localStorage.getItem('roomid')),
@@ -806,7 +873,6 @@ export default function Page() {
           if(rectIdx !== -1) {
             const ptt = shapes.current[rectIdx]
             if(ptt) {
-              console.log('assigned2')
               newShape.current = ptt
             }
             selectedIdx = rectIdx
@@ -861,7 +927,6 @@ export default function Page() {
           }
           shapes.current.push(obj)
           if(socket.current) {
-            // console.log('sending strokes')
             socket.current.send(JSON.stringify({
               type: 'line',
               roomid: Number(localStorage.getItem('roomid')),
@@ -889,7 +954,6 @@ export default function Page() {
           }
           shapes.current.push(obj)
           if(socket.current) {
-            // console.log('sending strokes')
             socket.current.send(JSON.stringify({
               type: 'circle',
               roomid: Number(localStorage.getItem('roomid')),
@@ -910,7 +974,6 @@ export default function Page() {
             }
             shapes.current.push(obj)
             if(socket.current) {
-              // console.log('sending strokes')
               socket.current.send(JSON.stringify({
                 type: 'path',
                 roomid: Number(localStorage.getItem('roomid')),
@@ -918,7 +981,6 @@ export default function Page() {
                 userid: localStorage.getItem('userid')
               }))
             }
-            // console.log(JSON.parse(JSON.stringify(obj)))
             points = []
             dp = []
             DrawRect()
@@ -943,9 +1005,7 @@ export default function Page() {
             if(index === selectedIdx)
               delObj = obj
           })
-          // console.log("delete objext", delObj)
           if(socket.current) {
-            // console.log('sending command to delete from client')
             socket.current.send(JSON.stringify({
               type: 'delete',
               roomid: Number(localStorage.getItem('roomid')),
