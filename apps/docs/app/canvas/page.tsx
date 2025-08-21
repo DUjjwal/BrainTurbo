@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import {  createElement, useEffect, useRef, useState } from "react";
 import ProfileDropdown from "../components/index";
 import { Crimson_Text } from "next/font/google";
+import { escape } from "querystring";
 
 
 
@@ -99,6 +100,9 @@ export default function Page() {
   const mouseX = useRef<number>(0)
   const mouseY = useRef<number>(0)
   
+
+  const oldShape = useRef<Shape>(null)
+  const newShape = useRef<Shape>(null)
 
   
 
@@ -379,6 +383,18 @@ export default function Page() {
             div.remove();
           }
         }
+        else if(parsed.type === 'move') {
+          console.log('received')
+          const updateShape: Shape[] = []
+          shapes.current.forEach((obj) => {
+            if(JSON.stringify(obj) === JSON.stringify(parsed.oldshape))
+              updateShape.push(parsed.newshape)
+            else
+              updateShape.push(obj)
+          })
+          shapes.current = updateShape
+          DrawRect()
+        }
         else {
           shapes.current.push(JSON.parse(msg.data))
           DrawRect()
@@ -460,7 +476,7 @@ export default function Page() {
       dy: number
     }[] = []
 
-    
+
 
     let textIdx = -1, dxt = 0, dyt = 0
 
@@ -497,6 +513,7 @@ export default function Page() {
         if(rectIdx !== -1) {
           const rect = shapes.current[rectIdx]
           if(rect && rect.type === 'rect') {
+            oldShape.current = JSON.parse(JSON.stringify(rect))
             dx = rect.x - e.clientX
             dy = rect.y - e.clientY
           }
@@ -504,6 +521,7 @@ export default function Page() {
         if(lineIdx !== -1) {
           const line = shapes.current[lineIdx]
           if(line && line.type === 'line') {
+            oldShape.current = JSON.parse(JSON.stringify(line))
             dx1 = line.startX - e.clientX
             dy1 = line.startY - e.clientY
 
@@ -514,6 +532,7 @@ export default function Page() {
         if(circleIdx !== -1) {
           const circle = shapes.current[circleIdx]
           if(circle && circle.type === 'circle') {
+            oldShape.current = JSON.parse(JSON.stringify(circle))
             dxc = circle.x - e.clientX
             dyc = circle.y - e.clientY
           }
@@ -522,6 +541,7 @@ export default function Page() {
           const pt = shapes.current[pointIdx]
 
           if(pt && pt.type === 'path') {
+            oldShape.current = JSON.parse(JSON.stringify(pt))
             const point = pt.points ?? []
             dp = []
             for(let i = 0; i < point.length; i++) {
@@ -783,18 +803,50 @@ export default function Page() {
             DrawRect()
         }
         else if(cursor.current === 'A') {
-          if(rectIdx !== -1)
-              selectedIdx = rectIdx
-          else if(lineIdx !== -1)
+          if(rectIdx !== -1) {
+            const ptt = shapes.current[rectIdx]
+            if(ptt) {
+              console.log('assigned2')
+              newShape.current = ptt
+            }
+            selectedIdx = rectIdx
+          }
+          else if(lineIdx !== -1) {
+            const ptt = shapes.current[lineIdx]
+            if(ptt)
+              newShape.current = ptt
             selectedIdx = lineIdx
-          else if(circleIdx !== -1)
+          }
+          else if(circleIdx !== -1) {
+            const ptt = shapes.current[circleIdx]
+            if(ptt)
+              newShape.current = ptt
             selectedIdx = circleIdx 
-          else
+          }
+          else if(pointIdx !== -1) {
+            const ptt = shapes.current[pointIdx]
+            if(ptt)
+              newShape.current = ptt
             selectedIdx = pointIdx
+          }
           rectIdx = -1
           lineIdx = -1
           circleIdx = -1
           pointIdx = -1
+
+          if(JSON.stringify(oldShape.current) !== JSON.stringify(newShape.current)) {
+            if(socket.current) {
+              socket.current.send(JSON.stringify({
+                type: 'move',
+                roomid: Number(localStorage.getItem('roomid')),
+                userid: localStorage.getItem('userid'),
+                oldshape: oldShape.current,
+                newshape: newShape.current
+              }))
+            }
+          }
+
+
         }
         else if(cursor.current === 'L') {
           const obj: Line = {
