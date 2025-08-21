@@ -967,7 +967,7 @@ export default function Page() {
             }
           }
 
-          textIdx = -1
+          
 
 
         }
