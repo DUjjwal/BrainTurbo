@@ -104,6 +104,8 @@ export default function Page() {
   const oldShape = useRef<Shape>(null)
   const newShape = useRef<Shape>(null)
 
+  const oldText = useRef<string>("")
+
   
 
   function DrawRect() {
@@ -209,7 +211,7 @@ export default function Page() {
         else {
           const left = Number(text.style.left.slice(0,text.style.left.length-2))
           const top = Number(text.style.top.slice(0,text.style.top.length-2))
-          if(socket.current) {
+          if(socket.current && txt !== oldText.current) {
             socket.current.send(JSON.stringify({
               type: 'text',
               roomid: Number(localStorage.getItem('roomid')),
@@ -442,6 +444,15 @@ export default function Page() {
           shapes.current = updateShape
           DrawRect()
         }
+        else if(parsed.type === 'deltext') {
+          // console.log('received')
+          const arr: HTMLTextAreaElement[] =Array.from(document.querySelectorAll('#text-box'))
+          arr.forEach((obj) => {
+            // console.log(obj.style.left, `${parsed.left}px`, obj.style.top, )
+            if(obj.style.left === `${parsed.left}px` && obj.style.top === `${parsed.top}px`)
+              obj.remove();
+          })
+        }
         else if(parsed.type === 'text') {
           console.log('received text')
           let flag: boolean = false
@@ -617,9 +628,10 @@ export default function Page() {
         }
       
         if(textIdx !== -1) {
-          const arr: HTMLElement[] = Array.from(document.querySelectorAll('#text-box'))
-          const text: HTMLElement | undefined = arr[textIdx]
+          const arr: HTMLTextAreaElement[] = Array.from(document.querySelectorAll('#text-box'))
+          const text: HTMLTextAreaElement | undefined = arr[textIdx]
           if(!text)return;
+          oldText.current = text.value
           dxt = text.offsetLeft - e.clientX
           dyt = text.offsetTop - e.clientY
         }
@@ -652,7 +664,7 @@ export default function Page() {
             else {
               const left = Number(text.style.left.slice(0,text.style.left.length-2))
               const top = Number(text.style.top.slice(0,text.style.top.length-2))
-              if(socket.current) {
+              if(socket.current && txt !== oldText.current) {
                 socket.current.send(JSON.stringify({
                   type: 'text',
                   roomid: Number(localStorage.getItem('roomid')),
@@ -1023,6 +1035,17 @@ export default function Page() {
           const arr: HTMLElement[] = Array.from(document.querySelectorAll('#text-box'))
           const text = arr[textIdx]
           if(!text)return;
+          const left = Number(text.style.left.slice(0,text.style.left.length-2))
+          const top = Number(text.style.top.slice(0,text.style.top.length-2))
+          if(socket.current) {
+            socket.current.send(JSON.stringify({
+              type: 'deltext',
+              roomid: Number(localStorage.getItem('roomid')),
+              userid: localStorage.getItem('userid'),
+              left,
+              top
+            }))
+          }
           document.body.removeChild(text)
           textIdx = -1
         }
