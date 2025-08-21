@@ -75,7 +75,7 @@ wss.on("connection", async function (socket, req) {
                     }
                 })
             }
-            else if(parsedData.type === 'mousemove' || parsedData.type === 'disconnect' || parsedData.type === 'move' || parsedData.type === 'text' || parsedData.type === 'deltext') {
+            else if(parsedData.type === 'mousemove' || parsedData.type === 'disconnect' || parsedData.type === 'move' || parsedData.type === 'text' || parsedData.type === 'deltext' || parsedData.type === 'textmove') {
                 console.log('disconnect trigger')
                 Users.forEach((obj) => {
                     if(obj.roomid === parsedData.roomid && obj.userid !== parsedData.userid) {
@@ -127,8 +127,9 @@ wss.on("connection", async function (socket, req) {
                     }
                 })
             }
-            else if(parsedData.type === 'mousemove' || parsedData.type === 'disconnect' || parsedData.type === 'move' || parsedData.type === 'text' || parsedData.type === 'deltext') {
+            else if(parsedData.type === 'mousemove' || parsedData.type === 'disconnect' || parsedData.type === 'move' || parsedData.type === 'text' || parsedData.type === 'deltext' || parsedData.type === 'textmove') {
                 console.log('disconnect trigger')
+                console.log(parsedData)
                 Users.forEach((obj) => {
                     if(obj.roomid === parsedData.roomid && obj.userid !== parsedData.userid) {
                         console.log('sent from here')

@@ -106,6 +106,9 @@ export default function Page() {
 
   const oldText = useRef<string>("")
 
+  const oldleft = useRef<number>(-1)
+  const oldtop = useRef<number>(-1)
+
   
 
   function DrawRect() {
@@ -433,6 +436,21 @@ export default function Page() {
             div.remove();
           }
         }
+        else if(parsed.type === 'textmove') {
+          console.log('received text move')
+          const arr: HTMLTextAreaElement[] = Array.from(document.querySelectorAll('#text-box'))
+          arr.forEach((obj) => {
+            const left = Number(obj.style.left.slice(0, obj.style.left.length - 2))
+            const top = Number(obj.style.top.slice(0, obj.style.top.length - 2))
+            console.log(left, top, parsed.oldleft, parsed.oldtop)
+            if(left === parsed.oldleft && top === parsed.oldtop) {
+              console.log('hua')
+              obj.style.left = `${parsed.newleft}px`
+              obj.style.top = `${parsed.newtop}px`
+            }
+            console.log(obj)
+          })
+        }
         else if(parsed.type === 'move') {
           const updateShape: Shape[] = []
           shapes.current.forEach((obj) => {
@@ -631,6 +649,9 @@ export default function Page() {
           const arr: HTMLTextAreaElement[] = Array.from(document.querySelectorAll('#text-box'))
           const text: HTMLTextAreaElement | undefined = arr[textIdx]
           if(!text)return;
+          oldleft.current = Number(text.style.left.slice(0, text.style.left.length - 2))
+          oldtop.current = Number(text.style.top.slice(0, text.style.top.length - 2))
+
           oldText.current = text.value
           dxt = text.offsetLeft - e.clientX
           dyt = text.offsetTop - e.clientY
@@ -923,6 +944,30 @@ export default function Page() {
               }))
             }
           }
+
+          if(textIdx !== -1) {
+            const arr: HTMLElement[] = Array.from(document.querySelectorAll('#text-box'))
+            const text = arr[textIdx]
+            if(!text)return;
+            const left = Number(text.style.left.slice(0,text.style.left.length-2))
+            const top = Number(text.style.top.slice(0,text.style.top.length-2))
+
+            if((oldleft.current !== left && oldleft.current !== -1) || (oldtop.current !== top && oldtop.current !== -1)) {
+              if(socket.current) {
+                socket.current.send(JSON.stringify({
+                  type: 'textmove',
+                  roomid: Number(localStorage.getItem('roomid')),
+                  userid: localStorage.getItem('userid'),
+                  oldleft: oldleft.current,
+                  oldtop: oldtop.current,
+                  newleft: left,
+                  newtop: top
+                }))
+              }
+            }
+          }
+
+          textIdx = -1
 
 
         }
