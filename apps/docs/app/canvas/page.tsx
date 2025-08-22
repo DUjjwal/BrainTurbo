@@ -1145,7 +1145,7 @@ export default function Page() {
       <div className="w-full" id="main">
         <ProfileDropdown session={session.data} room={true} roomID={roomId ?? ''}/>
         <canvas ref={ref}></canvas>
-        {(cursor.current !== 'A' && cursor.current !== 'T') ? <div className="flex flex-col p-1 gap-y-0.5 fixed left-0 top-1/2 transform -translate-y-1/2 border-1 border-gray-400 rounded-lg bg-white Z-50" id='options'>
+        {(cursor.current !== 'A' && cursor.current !== 'T') ? <div className="flex flex-col p-3 gap-y-1 fixed left-2 top-1/2 transform -translate-y-1/2 shadow-sm shadow-gray-400 rounded-lg bg-white Z-50" id='options'>
           <HeadingCustom str="Stroke"/>
           <div className="flex justify-center items-center gap-x-1 bg-white">
             <button className={`w-7 h-7 p-1 bg-black rounded-lg ${C === "black" ? "border-1 border-black" : ''}`} onClick={() =>  {
@@ -1173,36 +1173,50 @@ export default function Page() {
 
           </div>
           <HeadingCustom str="Stroke Width"/>
-          <div className="flex justify-start items-center gap-x-1">
-            <button className={`w-7 h-7 p-1 rounded-lg border-1 flex justify-center items-center ${L === 1 ? "bg-blue-200" : ''}`} onClick={() =>  {
+          <div className="flex justify-start items-center gap-x-2">
+            
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`w-8 h-8 p-1.5 ${L === 1 ? "bg-blue-200 rounded-lg": ""}`} transform="rotate(90)" onClick={() =>  {
               lineWidth.current = 1
               setL(1)
-            }}>1</button>
-            <button className={`w-7 h-7 p-1 rounded-lg border-1 flex justify-center items-center ${L === 2 ? "bg-blue-200" : ''}`} onClick={() =>  {
+            }}><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Interface / Line_L"> <path id="Vector" d="M12 19V5" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g> </g></svg>
+
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`w-8 h-8 p-1.5 ${L === 2 ? "bg-blue-200 rounded-lg": ""}`} transform="rotate(90)" onClick={() =>  {
               lineWidth.current = 2
               setL(2)
-            }}>2</button>
-            <button className={`w-7 h-7 p-1 rounded-lg border-1 flex justify-center items-center ${L === 5 ? "bg-blue-200" : ''}`} onClick={() =>  {
+            }}><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Interface / Line_L"> <path id="Vector" d="M12 19V5" stroke="#000000" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"></path> </g> </g></svg>
+
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`w-8 h-8 p-1.5 ${L === 5 ? "bg-blue-200 rounded-lg": ""}`} transform="rotate(90)" onClick={() =>  {
               lineWidth.current = 5
               setL(5)
-            }}>5</button>
+            }}><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Interface / Line_L"> <path id="Vector" d="M12 19V5" stroke="#000000" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"></path> </g> </g></svg>
+            
+            
+            
+            
+            
+            
 
           </div>
 
           <HeadingCustom str="Stroke Style"/>
-          <div className="flex justify-start items-center gap-x-1">
-            <button className={`w-7 h-7 p-1 rounded-lg border-1 flex justify-center items-center ${LD === 1 ? "bg-blue-200" : ''}`} onClick={() =>  {
+          <div className="flex justify-start items-center gap-x-2">
+
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`w-8 h-8 p-1.5 ${LD === 1 ? "bg-blue-200 rounded-lg": ""}`} transform="rotate(90)" onClick={() =>  {
               lineDash.current = []
               setLD(1)
-            }}>1</button>
-            <button className={`w-7 h-7 p-1 rounded-lg border-1 flex justify-center items-center ${LD === 2 ? "bg-blue-200" : ''}`} onClick={() =>  {
+            }}><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Interface / Line_L"> <path id="Vector" d="M12 19V5" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g> </g></svg>
+
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000" className={`w-8 h-8 p-1.5 ${LD === 2 ? "bg-blue-200 rounded-lg": ""}`} onClick={() =>  {
               lineDash.current = [15, 10]
               setLD(2)
-            }}>2</button>
-            <button className={`w-7 h-7 p-1 rounded-lg border-1 flex justify-center items-center ${LD === 5 ? "bg-blue-200" : ''}`} onClick={() =>  {
+            }}><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M6 13H1v-2h5zm6-2H7v2h5zm6 0h-5v2h5zm6 0h-5v2h5z"></path><path fill="none" d="M0 0h24v24H0z"></path></g></svg>
+
+
+            <svg width="20px" height="256px" viewBox="0 0 24 24" className={`w-8 h-8 p-1.5 ${LD === 5 ? "bg-blue-200 rounded-lg": ""}`} xmlns="http://www.w3.org/2000/svg" fill="#000000" onClick={() =>  {
               lineDash.current = [6, 10]
               setLD(5)
-            }}>5</button>
+            }}><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M3 13H1v-2h2zm4-2H5v2h2zm12 0h-2v2h2zm4 0h-2v2h2zm-12 0H9v2h2zm4 0h-2v2h2z"></path><path fill="none" d="M0 0h24v24H0z"></path></g></svg>
+
 
           </div>
         </div>: ''}
@@ -1326,6 +1340,7 @@ export default function Page() {
 
 function HeadingCustom({str}: {str: string}) {
   return (
-    <p className="text-sm">{str}</p>
+    <p className="text-base">{str}</p>
+    // <p className="text-sm text-gray-950">{str}</p>
   )
 }
