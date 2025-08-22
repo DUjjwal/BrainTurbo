@@ -59,27 +59,43 @@ export default function Home() {
                         //check if its a valid roomName present in DB also
                         //if yes set the roomId in localstorage
                         if(roomId === '')return;
-                        if(await roomExist(roomId)) {
-                            const id = await getDBID(roomId)
-                            localStorage.setItem('roomid', String(id))
-                            localStorage.setItem('userid', String(userid))
-                            localStorage.setItem('username', String(session.data?.user?.name))
-                            router.push("/canvas")
+                        try {
+                            if(await roomExist(roomId)) {
+                                const id = await getDBID(roomId)
+                                localStorage.setItem('roomid', String(id))
+                                localStorage.setItem('userid', String(userid))
+                                localStorage.setItem('username', String(session.data?.user?.name))
+                                router.push("/canvas")
+                            }
+                            else {
+                                toast.error('Room ID Invalid!', {
+                                position: "top-right",
+                                autoClose: 5000,
+                                hideProgressBar: false,
+                                closeOnClick: false,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "light",
+                                transition: Bounce,
+                                });
+                                setRoomId("")
+                            }                     
                         }
-                        else {
-                            toast.error('Room ID Invalid!', {
-                            position: "top-right",
-                            autoClose: 5000,
-                            hideProgressBar: false,
-                            closeOnClick: false,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                            theme: "light",
-                            transition: Bounce,
-                            });
-                            setRoomId("")
-                        }                     
+                        catch(err) {
+                            toast.error('DB Error Retry!', {
+                                position: "top-right",
+                                autoClose: 5000,
+                                hideProgressBar: false,
+                                closeOnClick: false,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "light",
+                                transition: Bounce,
+                                });
+                                setRoomId("")
+                        }
                     }}>Join Room</button>
                     <div className = "inline-flex items-center justify-center w-full">
                         <hr className = "w-64 h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"/>
@@ -87,26 +103,42 @@ export default function Home() {
                     </div>
                     <button type="submit" className = "w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-fullpx-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onClick={async () => {
                         const id = uuid()
-                        const res = await createRoom(id)
-                        if(res) {
-                            const dbid = await getDBID(id)
-                            localStorage.setItem('roomid', String(dbid))
-                            localStorage.setItem('userid', String(userid))
-                            localStorage.setItem('username', String(session.data?.user?.name))
-                            router.push("/canvas")
-                        }
-                        else {
-                            toast.error('Room Creation Failed Try Again', {
-                            position: "top-right",
-                            autoClose: 5000,
-                            hideProgressBar: false,
-                            closeOnClick: false,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                            theme: "light",
-                            transition: Bounce,
-                            });
+                        try {
+                            const res = await createRoom(id)
+                            if(res) {
+                                const dbid = await getDBID(id)
+                                localStorage.setItem('roomid', String(dbid))
+                                localStorage.setItem('userid', String(userid))
+                                localStorage.setItem('username', String(session.data?.user?.name))
+                                router.push("/canvas")
+                            }
+                            else {
+                                toast.error('Room Creation Failed Try Again', {
+                                position: "top-right",
+                                autoClose: 5000,
+                                hideProgressBar: false,
+                                closeOnClick: false,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "light",
+                                transition: Bounce,
+                                });
+                            }
+
+                        }catch(err) {
+                            toast.error('DB Error Retry!', {
+                                position: "top-right",
+                                autoClose: 5000,
+                                hideProgressBar: false,
+                                closeOnClick: false,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "light",
+                                transition: Bounce,
+                                });
+                                setRoomId("")
                         }
                     }}>Create Room</button>
                 </div>
