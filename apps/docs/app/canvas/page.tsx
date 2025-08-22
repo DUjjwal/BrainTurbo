@@ -72,6 +72,13 @@ export default function Page() {
 
   const valid = useRef<boolean>(false)
 
+
+  const ROOMID = useRef<string|null>(null)
+  const USERID = useRef<string|null>(null)
+  const USERNAME = useRef<string|null>(null)
+
+  
+
   const socket = useRef<WebSocket | null>(null)
   const [roomId, setRoomId] = useState("")
   
@@ -523,6 +530,10 @@ export default function Page() {
   }, [session, session.status])
 
   useEffect(() => {
+    ROOMID.current = localStorage.getItem('roomid')
+    USERID.current = localStorage.getItem('userid')
+    USERNAME.current = localStorage.getItem('username')
+    console.log(ROOMID.current, USERID.current, USERNAME.current)
     mouseSendEvent.current = setInterval(() => {
       if(socket.current && mouseX.current !== prevMouseX.current && mouseY.current !== prevMouseY.current)  {
         socket.current.send(JSON.stringify({
@@ -541,6 +552,7 @@ export default function Page() {
       
     }, 200)  
     const handleUnload = () => {
+
       if(socket.current) {
         socket.current.send(JSON.stringify({
           type: 'disconnect',
@@ -548,6 +560,9 @@ export default function Page() {
           roomid: Number(localStorage.getItem('roomid'))
         }))
       }  
+      localStorage.removeItem('username')
+      localStorage.removeItem('userid')
+      localStorage.removeItem('roomid')
     }
     window.addEventListener('beforeunload', handleUnload);
     return () => {
@@ -920,6 +935,8 @@ export default function Page() {
                 userid: localStorage.getItem('userid')
               }))
             }
+            setCursorState('A')
+            cursor.current = 'A'
             DrawRect()
         }
         else if(cursor.current === 'A') {
@@ -1011,6 +1028,8 @@ export default function Page() {
               userid: localStorage.getItem('userid')
             }))
           }
+          setCursorState('A')
+            cursor.current = 'A'
           DrawRect()
         }
         else if(cursor.current === 'C') {
@@ -1038,6 +1057,8 @@ export default function Page() {
               userid: localStorage.getItem('userid')
             }))
           }
+          setCursorState('A')
+            cursor.current = 'A'
           DrawRect()
         }
         else if(cursor.current === 'P') {
@@ -1060,6 +1081,8 @@ export default function Page() {
             }
             points = []
             dp = []
+            setCursorState('A')
+            cursor.current = 'A'
             DrawRect()
 
           }
@@ -1136,8 +1159,8 @@ export default function Page() {
 
             </div>
         );
-    }          
-  else if(session.status === 'loading') {
+    }
+    else if(session.status === 'loading') {
         return (
             <div role="status" className = "w-full h-screen flex justify-center items-center">
             <svg aria-hidden="true" className = "w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
