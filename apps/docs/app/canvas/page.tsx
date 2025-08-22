@@ -829,12 +829,10 @@ export default function Page() {
             const arr: HTMLElement[] = Array.from(document.querySelectorAll('#text-box'))
             const text = arr[textIdx]
             if(!text)return
-            document.body.removeChild(text)
             const xt = dxt + e.clientX, yt = dyt + e.clientY
 
             text.style.left = `${xt}px`
             text.style.top = `${yt}px`
-            document.body.appendChild(text)
           }
         }
         else {
