@@ -1227,7 +1227,8 @@ export default function Page() {
         </div>
 
         </div>: ''}
-        {(cursor.current === 'T') ? <div className="flex flex-col p-1 gap-y-0.5 fixed left-0 top-1/2 transform -translate-y-1/2 border-1 border-gray-400 rounded-lg bg-white Z-50" id='options'>
+        {(cursor.current === 'T') ? <div className="flex flex-col p-3 gap-y-2 fixed left-2 top-1/2 transform -translate-y-1/2 shadow-sm shadow-gray-400 rounded-lg bg-white Z-50" id='options'>
+        <div>
           <HeadingCustom str="Stroke"/>
           <div className="flex justify-center items-center gap-x-1 bg-white">
             <button className={`w-7 h-7 p-1 bg-black rounded-lg ${C === "black" ? "border-1 border-black" : ''}`} onClick={() =>  {
@@ -1254,43 +1255,55 @@ export default function Page() {
             }}></button>
 
           </div>
+
+        </div>
+        <div>
           <HeadingCustom str="Font Size"/>
-          <div className="flex justify-start items-center gap-x-1">
-            <button className={`w-7 h-7 p-1 rounded-lg border-1 flex justify-center items-center ${F === 1 ? "bg-blue-200" : ''}`} onClick={() =>  {
+          <div className="flex justify-start items-center gap-x-2">
+            <button className={`w-8 h-8 p-1 text-lg rounded-lg flex justify-center items-center ${F === 1 ? "bg-blue-200" : ''}`} onClick={() =>  {
               fontSize.current = 20
               setF(1)
             }}>S</button>
-            <button className={`w-7 h-7 p-1 rounded-lg border-1 flex justify-center items-center ${F === 2 ? "bg-blue-200" : ''}`} onClick={() =>  {
+            <button className={`w-8 h-8 p-1 text-lg rounded-lg flex justify-center items-center ${F === 2 ? "bg-blue-200" : ''}`} onClick={() =>  {
               fontSize.current = 30
               setF(2)
             }}>M</button>
-            <button className={`w-7 h-7 p-1 rounded-lg border-1 flex justify-center items-center ${F === 3 ? "bg-blue-200" : ''}`} onClick={() =>  {
+            <button className={`w-8 h-8 p-1 text-lg rounded-lg flex justify-center items-center ${F === 3 ? "bg-blue-200" : ''}`} onClick={() =>  {
               fontSize.current = 40
               setF(3)
             }}>L</button>
-            <button className={`w-7 h-7 p-1 rounded-lg border-1 flex justify-center items-center ${F === 4 ? "bg-blue-200" : ''}`} onClick={() =>  {
+            <button className={`w-8 h-8 p-1 text-lg rounded-lg  flex justify-center items-center ${F === 4 ? "bg-blue-200" : ''}`} onClick={() =>  {
               fontSize.current = 50
               setF(4)
             }}>XL</button>
 
           </div>
 
+        </div>
+        <div>
           <HeadingCustom str="Text Align"/>
-          <div className="flex justify-start items-center gap-x-1">
-            <button className={`w-7 h-7 p-1 rounded-lg border-1 flex justify-center items-center ${T === 1 ? "bg-blue-200" : ''}`} onClick={() =>  {
+          <div className="flex justify-start items-center gap-x-2">
+            <svg viewBox="0 0 24 24" className={`w-8 h-8 p-1.5 ${T === 1 ? "bg-blue-200 rounded-lg": ""}`} fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() =>  {
               textAlign.current = 'left'
               setT(1)
-            }}>L</button>
-            <button className={`w-7 h-7 p-1 rounded-lg border-1 flex justify-center items-center ${T === 2 ? "bg-blue-200" : ''}`} onClick={() =>  {
+            }}><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Edit / Text_Align_Left"> <path id="Vector" d="M4 18H14M4 14H20M4 10H14M4 6H20" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g> </g></svg>
+
+            
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`w-8 h-8 p-1.5 ${T === 2 ? "bg-blue-200 rounded-lg": ""}`} onClick={() =>  {
               textAlign.current = 'center'
               setT(2)
-            }}>C</button>
-            <button className={`w-7 h-7 p-1 rounded-lg border-1 flex justify-center items-center ${T === 3 ? "bg-blue-200" : ''}`} onClick={() =>  {
+            }}><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Edit / Text_Align_Center"> <path id="Vector" d="M17 18H7M20 14H4M17 10H7M20 6H4" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g> </g></svg>
+
+
+            <svg viewBox="0 0 24 24" transform="matrix(-1, 0, 0, 1, 0, 0)" className={`w-8 h-8 p-1.5 ${T === 3 ? "bg-blue-200 rounded-lg": ""}`} fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() =>  {
               textAlign.current = 'right'
               setT(3)
-            }}>R</button>
+            }}><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="Edit / Text_Align_Left"> <path id="Vector" d="M4 18H14M4 14H20M4 10H14M4 6H20" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path> </g> </g></svg>
 
           </div>
+
+        </div>
+
         </div>: ''}
 
         
