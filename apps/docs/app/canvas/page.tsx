@@ -70,6 +70,8 @@ export default function Page() {
   const router = useRouter()
   const session = useSession()
 
+  const valid = useRef<boolean>(false)
+
   const socket = useRef<WebSocket | null>(null)
   const [roomId, setRoomId] = useState("")
   
@@ -109,6 +111,24 @@ export default function Page() {
   const oldleft = useRef<number>(-1)
   const oldtop = useRef<number>(-1)
 
+  function observeTextArea(textarea: HTMLTextAreaElement) {
+    const ro = new ResizeObserver(() => {
+      // Whenever resize happens, mark as false
+      valid.current = false;
+
+      // Clear any previous timer
+      if ((observeTextArea as any)._timeout) {
+        clearTimeout((observeTextArea as any)._timeout);
+      }
+
+      // After 200ms of no resize events, mark as true
+      (observeTextArea as any)._timeout = setTimeout(() => {
+        valid.current = true;
+      }, 200);
+    });
+
+    ro.observe(textarea);
+  }
   
 
   function DrawRect() {
@@ -200,6 +220,7 @@ export default function Page() {
     text.id = 'text-box'
     text.style.textAlign = textAlign.current
     text.value = `${val}`
+    observeTextArea(text)
     document.body.append(text)
     setTimeout(() => {
       text.focus()
@@ -674,6 +695,7 @@ export default function Page() {
         text.style.color = color.current
         text.id = 'text-box'
         text.style.textAlign = textAlign.current
+        observeTextArea(text)
         document.body.append(text)
         setTimeout(() => {
           text.focus()
@@ -825,7 +847,7 @@ export default function Page() {
             }
             DrawRect()
           }
-          else if(textIdx !== -1) {
+          else if(textIdx !== -1 && valid.current === true) {
             const arr: HTMLElement[] = Array.from(document.querySelectorAll('#text-box'))
             const text = arr[textIdx]
             if(!text)return
