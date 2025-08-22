@@ -1143,7 +1143,8 @@ export default function Page() {
       <div className="w-full" id="main">
         <ProfileDropdown session={session.data} room={true} roomID={roomId ?? ''}/>
         <canvas ref={ref}></canvas>
-        {(cursor.current !== 'A' && cursor.current !== 'T') ? <div className="flex flex-col p-3 gap-y-1 fixed left-2 top-1/2 transform -translate-y-1/2 shadow-sm shadow-gray-400 rounded-lg bg-white Z-50" id='options'>
+        {(cursor.current !== 'A' && cursor.current !== 'T') ? <div className="flex flex-col p-3 gap-y-2 fixed left-2 top-1/2 transform -translate-y-1/2 shadow-sm shadow-gray-400 rounded-lg bg-white Z-50" id='options'>
+        <div>
           <HeadingCustom str="Stroke"/>
           <div className="flex justify-center items-center gap-x-1 bg-white">
             <button className={`w-7 h-7 p-1 bg-black rounded-lg ${C === "black" ? "border-1 border-black" : ''}`} onClick={() =>  {
@@ -1170,6 +1171,9 @@ export default function Page() {
             }}></button>
 
           </div>
+
+        </div>
+        <div>
           <HeadingCustom str="Stroke Width"/>
           <div className="flex justify-start items-center gap-x-2">
             
@@ -1196,6 +1200,8 @@ export default function Page() {
 
           </div>
 
+        </div>
+        <div>
           <HeadingCustom str="Stroke Style"/>
           <div className="flex justify-start items-center gap-x-2">
 
@@ -1217,6 +1223,9 @@ export default function Page() {
 
 
           </div>
+
+        </div>
+
         </div>: ''}
         {(cursor.current === 'T') ? <div className="flex flex-col p-1 gap-y-0.5 fixed left-0 top-1/2 transform -translate-y-1/2 border-1 border-gray-400 rounded-lg bg-white Z-50" id='options'>
           <HeadingCustom str="Stroke"/>
@@ -1338,7 +1347,7 @@ export default function Page() {
 
 function HeadingCustom({str}: {str: string}) {
   return (
-    <p className="text-base">{str}</p>
+    <h2 className="text-base">{str}</h2>
     // <p className="text-sm text-gray-950">{str}</p>
   )
 }
