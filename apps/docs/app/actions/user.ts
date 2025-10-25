@@ -12,14 +12,14 @@ export async function roomExist(roomName: string): Promise<boolean> {
     return true
 }
 
-export async function getDBID(roomName: string): Promise<number> {
+export async function getDBID(roomName: string): Promise<string> {
     const res = await db.room.findFirst({
         where: {
             name: roomName
         }
     })
-    if(!res)return 0
-    return res.id
+    if(!res)return ""
+    return res.name
 }
 
 export async function createRoom(roomName: string): Promise<boolean> {
