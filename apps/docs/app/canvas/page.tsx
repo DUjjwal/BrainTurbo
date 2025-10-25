@@ -413,7 +413,7 @@ export default function Page() {
   useEffect(() => {
     if(session && session.status === 'authenticated') {
       //@ts-ignore
-      const ws = new WebSocket(`ws://localhost:4000?token=${session.data.user.idToken}`)
+      const ws = new WebSocket(`https://brainturbo.onrender.com?token=${session.data.user.idToken}`)
       ws.onopen = () => {
         if(ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify({
