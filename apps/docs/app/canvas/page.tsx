@@ -560,9 +560,6 @@ export default function Page() {
           roomid: Number(localStorage.getItem('roomid'))
         }))
       }  
-      localStorage.removeItem('username')
-      localStorage.removeItem('userid')
-      localStorage.removeItem('roomid')
     }
     window.addEventListener('beforeunload', handleUnload);
     return () => {
