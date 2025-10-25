@@ -34,7 +34,7 @@ const Users: User[] = []
 const wss = new WebSocketServer({server: httpServer})
 
 wss.on("connection", async function (socket, req) {
-    const url = new URL(req.url ?? "", "http://localhost")
+    const url = new URL(req.url ?? "", "https://brainturbo.onrender.com")
     const token = url.searchParams.get("token")
 
     const buffer: any[] = []
